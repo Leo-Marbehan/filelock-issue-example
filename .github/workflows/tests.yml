@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  workflow-dispatch:
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        python-version: ['3.14']
+        filelock-version: ['3.18.0', '3.25.0']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install filelock
+        run: |
+          python -m pip install --upgrade pip
+          pip install filelock==${{ matrix.filelock-version }}
+
+      - name: Run
+        run: |
+          python test.py
